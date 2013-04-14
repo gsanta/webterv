@@ -1,6 +1,6 @@
 <?php
+	session_start();
     require 'controller/controller.php';
-
      
     $controller = new Controller();
     $contentArray = $controller->getContentArray();

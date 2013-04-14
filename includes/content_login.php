@@ -3,7 +3,11 @@
             <div id="content">
                 <form id="login-form" action="forum.php?page=login&action=login" method="post">
                     <?php echo $controller->getValue("login_message"); ?>
-                    <?php echo $controller->getValue("error_message"); ?>
+                    <?php 
+                        foreach ($controller->getValue("error_message") as $value) {
+                            echo $value . "<br>";        
+                        }
+                    ?>
                     <table>
                         <tr>
                             <!-- <td>Felh. azonosító:</td> -->
