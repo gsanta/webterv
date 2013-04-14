@@ -1,0 +1,33 @@
+body {
+	    background-color: #E8E8E8;
+}
+
+.required {
+    color: #0B0;
+}
+
+.reject {
+    color: #F56A4E;
+}
+
+.important {
+    font-weight: bold;
+}
+
+ol.main-requirement {
+    list-style-type: upper-alpha;
+}
+
+.remarks {
+    color: #545454;
+    font-style: italic;
+}
+
+.extra {
+    color: black;
+    font-style: italic;
+}
+
+ol li ol li ol {
+    list-style-type: lower-alpha;
+}

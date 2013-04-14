@@ -1,0 +1,79 @@
+body {
+    font: 62.5% Arial, Helvetica, sans-serif;
+    color: #597347;
+    margin: 0;
+    padding: 0;
+}
+
+h1, h2 {
+    color: #87ac6d;
+    font-family: Tahoma, Arial, Geneva, sans-serif;
+    margin: 20px 0 10px;
+}
+
+h1 {
+    font-size: 2.5em;
+}
+
+p {
+    margin: 10px 0;
+    padding: 0;
+}
+
+blockquote {
+    font-style: italic; 
+}
+
+#header-wrap {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    /*overflow: auto;*/
+}
+
+#header-container {
+    height: 100px;
+    background: blue;
+}
+
+#container {
+    width: 100%;
+    font-size: 1.4em;
+    padding: 100px 0 120px;
+    overflow: auto;
+    background: grey;
+}
+
+#content {
+    margin-right: 23em;
+    width: 30em;
+    background: yellow;
+}
+
+#menu {
+    position: fixed;
+    height: 100%;
+    top: 100px;
+    right: 0;
+    width: 20em;
+    margin-bottom: 500px;
+    background: red;
+}
+
+#footer-wrap {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+        overflow: auto;
+}
+
+#footer-container {
+    background: blue;
+    height: 120px;
+}
+
+#login-form {
+    display: inline-block;
+    text-align: center;
+    border: 1px solid black;
+}
