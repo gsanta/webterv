@@ -1,52 +1,42 @@
-body {
-    font: 62.5% Arial, Helvetica, sans-serif;
-    color: #597347;
+
+
+html, body {
     margin: 0;
     padding: 0;
-}
-
-h1, h2 {
-    color: #87ac6d;
-    font-family: Tahoma, Arial, Geneva, sans-serif;
-    margin: 20px 0 10px;
-}
-
-h1 {
-    font-size: 2.5em;
+    height: 100%;
 }
 
 p {
-    margin: 10px 0;
+    margin: 0 0;
     padding: 0;
 }
 
-blockquote {
-    font-style: italic; 
+h1 {
+    margin-top: 0;
+    padding-top: 0.5em;
 }
 
 #header-wrap {
     position: fixed;
     top: 0;
     width: 100%;
-    /*overflow: auto;*/
-}
-
-#header-container {
     height: 100px;
     background: blue;
 }
 
 #container {
     width: 100%;
-    font-size: 1.4em;
-    padding: 100px 0 120px;
+    margin: 0 0 -120px 0;
+    min-height: 100%;
     overflow: auto;
     background: grey;
 }
 
 #content {
-    margin-right: 23em;
-    width: 30em;
+    margin: 0;
+    padding: 100px 0 120px 0;
+    min-height: 100%;
+    margin-right: 20em;
     background: yellow;
 }
 
@@ -56,7 +46,6 @@ blockquote {
     top: 100px;
     right: 0;
     width: 20em;
-    margin-bottom: 500px;
     background: red;
 }
 
@@ -64,12 +53,9 @@ blockquote {
     position: fixed;
     bottom: 0;
     width: 100%;
-        overflow: auto;
-}
-
-#footer-container {
-    background: blue;
+    overflow: auto;
     height: 120px;
+    background: blue;
 }
 
 #login-form {

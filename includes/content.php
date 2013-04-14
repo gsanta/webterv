@@ -1,5 +1,3 @@
-<!-- <div id="ie6pagewrap"> -->
-	<div id="ie6pagecontainer">
         <div id="container">
             <div id="content">
                 <h1>Sed ut perspiciatis unde</h1>
@@ -13,11 +11,10 @@
             </div>
         <div id="menu">
         	<ul>
-                <li><a href="#">Bejelentkezés</a></li>
+                <li><a href="forum.php?page=login">Bejelentkezés</a></li>
                 <li><a href="#">Regisztráció</a></li>
                 <li><a href="#">Fórum</a></li>
                 <li><a href="#">Kijelentkezés</a></li>
             </ul>
         </div>
         </div><!--END CONTAINER-->                
-	</div>

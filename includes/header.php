@@ -12,7 +12,5 @@
 <body>
 
 	<div id="header-wrap">
-		<div id="header-container">
 
-		</div>
 	</div>
