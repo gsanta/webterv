@@ -1,11 +1,15 @@
 <?php
 
+require 'user_database.php';
+
 class Controller {
 	private $varArray;
 	private $contentArray;
+	private $user_database;
 
 	function __construct() {
-		$this->createContent();
+		$this->user_database = new User_database();
+		$this->createContent();	
 	}
 
 	public function loggedIn() {
@@ -45,7 +49,7 @@ class Controller {
 				}
 
 				if(!$missing) {
-					$auth_info = $this->authenticate($user_name, $password);
+					$auth_info = $this->user_database->authenticate($user_name, $password);
 
 					if($auth_info["success"] == true) {
 						$_SESSION["user_data"] = $auth_info["user_data"];
@@ -69,7 +73,7 @@ class Controller {
 				"password" => "",
 				"password_repeat" => "",
 				"email" => "",
-				"login_message" => "",
+				"message" => array(),
 				"error_message" => array(
 					"user_name" => "",
 					"password" => "",
@@ -119,7 +123,11 @@ class Controller {
 						$this->varArray["error_message"]["password_not_match"] = "A két jelszó nem egyezik!";
 						$error = true;
 					} else {
-						$save_user($user_name,$password,$email);
+						if(!$this->user_database->save_user($user_name,$password,$email)) {
+							$error = true;
+						} else {
+							$this->varArray["message"][] = "Sikeres regisztráció!";
+						}
 					}
 				}
 
@@ -130,6 +138,11 @@ class Controller {
 					$this->varArray["email"] = $email;
 				}
 			}
+		} else if($page = "content_topics") {
+			$this->varArray = array(
+
+			);
+			$this->contentArray = array('header','content_topics', 'footer');
 		}
 	}
 
@@ -142,20 +155,7 @@ class Controller {
 		return $this->varArray[$param];
 	}
 
-	private function authenticate($user_name, $password) {
-		$auth_info = array(
-			"success" => false,
-			"user_data" => array()
-		);
-
-		if($user_name == "admin" && $password == "santag") {
-			$auth_info["success"] = true;
-			$auth_info["user_data"]["name"] = $user_name;
-			$auth_info["user_data"]["id"] = 1;
-		} 
-
-		return $auth_info;
-	}
+	
 
 	private function is_user_name_unique($user_name) {
 		if($user_name == "santag") {
@@ -172,7 +172,5 @@ class Controller {
 		return true;
 	}
 
-	private function save_user($user_name,$password,$email) {
 
-	}
 }

@@ -40,7 +40,11 @@
                         </tr>
                     </table>
                 </form>
-                <?php echo $controller->getValue("login_message"); ?>
+                <?php 
+                    foreach ($controller->getValue("message") as $value) {
+                        echo $value . "<br>";
+                    } 
+                ?>
             </div>
         <div id="menu">
         	<ul>

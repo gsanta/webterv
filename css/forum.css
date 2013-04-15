@@ -63,3 +63,21 @@ h1 {
     text-align: center;
     border: 1px solid black;
 }
+
+#table-topics {
+    width: 700px;
+    margin: 0 auto;
+    border: 1px solid black;
+}
+
+#table-topics .first-column {
+    width: 400px;
+}
+
+#table-topics .second-column {
+    width: 100px;
+}
+
+#table-topics .third-column {
+    width: 200px;
+}
