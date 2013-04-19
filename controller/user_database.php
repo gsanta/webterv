@@ -4,7 +4,7 @@ class User_database {
 	private $db;
 
 	function __construct() {
-		$this->db = new PDO('mysql:host=localhost;dbname=h171917;charset=utf8', 'root', 'santag');
+		$this->db = new PDO(Constants::$DATABASE_URL, Constants::$DATABASE_USERNAME, Constants::$DATABASE_PASSWORD);
 	}
 
 	public function get_db() {

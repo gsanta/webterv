@@ -1,15 +1,18 @@
 <?php
 
 require 'user_database.php';
+require 'topic_database.php';
 
 class Controller {
 	private $varArray;
 	private $contentArray;
 	private $user_database;
+	private $topic_database;
 
 	function __construct() {
 		$this->user_database = new User_database();
-		$this->createContent();	
+		$this->topic_database = new Topic_database();
+		$this->createContent();
 	}
 
 	public function loggedIn() {
@@ -17,12 +20,10 @@ class Controller {
 	}
 
 	private function createContent() {
-		$page = isset($_GET['page']) ? $_GET['page'] : null;
+		$page = isset($_GET['page']) ? $_GET['page'] : 'topics';
 		$action = isset($_GET['action']) ? $_GET['action'] : null;
-
-		if($page == NULL) {
-			$this->contentArray = array('header','content', 'footer');
-		} else if($page == 'login') {
+		
+		if($page == 'login') {
 			$this->varArray = array(
 				"user_name_label" => "Felhasználói azonosító: ",
 				"password_label" => "Jelszó: ",
@@ -54,6 +55,8 @@ class Controller {
 					if($auth_info["success"] == true) {
 						$_SESSION["user_data"] = $auth_info["user_data"];
 						$this->varArray["login_message"] = "sikerült!";
+
+						 header('Location: http://' . Constants::$BASE_URL . '?page=topics');
 
 					} else {
 						$this->varArray["user_name"] =  $user_name;
@@ -138,11 +141,45 @@ class Controller {
 					$this->varArray["email"] = $email;
 				}
 			}
-		} else if($page = "content_topics") {
+		} else if($page == "topics") {
 			$this->varArray = array(
-
+				'topic_rows' => array()
 			);
+
 			$this->contentArray = array('header','content_topics', 'footer');
+			$this->varArray['topic_rows'] = $this->topic_database->get_topics();
+		} else if($page == "topic") {
+			$topic_id = isset($_GET['topic_id']) ? $_GET['topic_id'] : null;
+
+			$this->varArray = array(
+				'comment_rows' => array(),
+				'topic_id' => $topic_id
+			);
+
+			$this->contentArray = array('header','content_topic', 'footer');
+			$this->varArray['comment_rows'] = $this->topic_database->get_comments($topic_id);
+		} else if($page == "new_comment") {
+			$topic_id = isset($_GET['topic_id']) ? $_GET['topic_id'] : null;
+
+			$this->varArray = array(
+				'topic_id' => $topic_id
+			);
+
+			$this->contentArray = array('header','content_comment_new', 'footer');
+
+			$action = isset($_POST['action']) ? $_POST['action'] : null;
+			if($action == "add_comment") {
+				$topic_id = isset($_POST['topic_id']) ? $_POST['topic_id'] : null;
+				$content = isset($_POST['content']) ? $_POST['content'] : null;
+
+				if($this->topic_database->add_comment(1,$topic_id,$content) == 1) {
+					header('Location: http://' . Constants::$BASE_URL . '?page=topic&topic_id=' . $topic_id);
+				}
+			}
+		} else if($page == "logout") {
+			unset($_SESSION['user_data']);
+
+			header('Location: http://' . Constants::$BASE_URL . '?page=topics');
 		}
 	}
 

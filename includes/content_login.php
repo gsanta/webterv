@@ -5,7 +5,7 @@
                     <?php echo $controller->getValue("login_message"); ?>
                     <?php 
                         foreach ($controller->getValue("error_message") as $value) {
-                            echo $value . "<br>";        
+                            echo '<span class="error-message">' . $value . "</span><br>";        
                         }
                     ?>
                     <table>
@@ -27,10 +27,22 @@
             </div>
         <div id="menu">
         	<ul>
-                <li><a href="forum.php?page=login">Bejelentkezés</a></li>
-                <li><a href="#">Regisztráció</a></li>
-                <li><a href="#">Fórum</a></li>
-                <li><a href="#">Kijelentkezés</a></li>
+                <?php 
+                    if(!isset($_SESSION['user_data'])) :
+                ?>
+                    <li class="act-link"><a href="forum.php?page=login">Bejelentkezés</a></li>
+                    <li><a href="forum.php?page=registration">Regisztráció</a></li>
+                <?php        
+                    endif;
+                ?>
+                <li><a href="forum.php?page=topics">Fórum</a></li>               
+                <?php 
+                    if(isset($_SESSION['user_data'])) :
+                ?>
+                    <li><a href="forum.php?page=logout">Kijelentkezés</a></li>
+                <?php        
+                    endif;
+                ?>  
             </ul>
         </div>
         </div><!--END CONTAINER-->                
