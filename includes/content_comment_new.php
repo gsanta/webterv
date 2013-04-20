@@ -8,6 +8,11 @@
                 </form>
             </div>
         <div id="menu">
+            <?php 
+                    if(isset($_SESSION['user_data'])) {
+                        echo 'Üdv, ' . $_SESSION['user_data']['name'] . '!';
+                    }
+            ?>
         	<ul>
                 <?php 
                     if(!isset($_SESSION['user_data'])) :

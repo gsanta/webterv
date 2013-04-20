@@ -18,18 +18,23 @@
         <div id="menu">
         	<ul>
                 <?php 
+                    if(isset($_SESSION['user_data'])) {
+                        echo 'Üdv, ' . $_SESSION['user_data']['name'] . '!';
+                    }
+                ?>
+                <?php 
                     if(!isset($_SESSION['user_data'])) :
                 ?>
                     <li><a href="forum.php?page=login">Bejelentkezés</a></li>
-                    <li><a href="#">Regisztráció</a></li>
+                    <li><a href="forum.php?page=registration">Regisztráció</a></li>
                 <?php        
                     endif;
                 ?>
-                <li>Fórum</li>               
+                <li><a href="forum.php?page=topics"></a></li>               
                 <?php 
                     if(isset($_SESSION['user_data'])) :
                 ?>
-                    <li><a href="#">Kijelentkezés</a></li>
+                    <li><a href="forum.php?page=logout">Kijelentkezés</a></li>
                 <?php        
                     endif;
                 ?>

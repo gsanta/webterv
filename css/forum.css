@@ -48,12 +48,18 @@ li {
 }
 
 #menu {
+    padding: 5px;
     position: fixed;
     height: 100%;
     top: 100px;
     right: 0;
     width: 20em;
     border-left: 2px solid #e12222;
+}
+
+#menu li:hover {
+    border-left: 1px solid red;
+    padding-left: 5px;
 }
 
 
@@ -72,6 +78,7 @@ li {
     margin: 0 auto;
     margin-top: 100px;
     border: 1px solid black;
+    padding: 5px;
 }
 
 #table-topics {
@@ -100,6 +107,10 @@ li {
     width: 200px;
 }
 
+#table-topics .unread {
+    font-weight: bold;
+}
+
 .comment {
     border: 1px solid black;
     margin-bottom: 20px;
@@ -115,7 +126,7 @@ li {
 }
 
 .act-link {
-    background: yellow;
+    color: red;
 }
 
 .error-message {
@@ -129,4 +140,9 @@ li {
     width: 350px;
     margin: 0 auto;
     margin-top: 50px;
+}
+
+.message {
+    font-size: 0.8em;
+    color: green;
 }

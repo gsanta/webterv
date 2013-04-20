@@ -71,7 +71,7 @@ class Controller {
 				"password_label" => "Jelszó: ",
 				"password_repeat_label" => "Jelszó újra: ",
 				"email_label" => "Email: ",
-				"registration_label" => "Regisztráció: ",
+				"registration_label" => "Regisztráció",
 				"user_name" => "",
 				"password" => "",
 				"password_repeat" => "",
@@ -119,11 +119,14 @@ class Controller {
 				}
 
 				if(!$error) {
-					if(!$this->is_user_name_unique($user_name)) {
+					if(!$this->user_database->is_user_name_unique($user_name)) {
 						$this->varArray["error_message"]["user_name_not_unique"] = "Ez a felhasználónév már foglalt!";
 						$error = true;
 					} else if(!$this->is_password_match($password,$password_repeat)) {
 						$this->varArray["error_message"]["password_not_match"] = "A két jelszó nem egyezik!";
+						$error = true;
+					} else if(filter_var($email, FILTER_VALIDATE_EMAIL) == false) {
+						$this->varArray["error_message"]["email"] = "Hibás email cím!";
 						$error = true;
 					} else {
 						if(!$this->user_database->save_user($user_name,$password,$email)) {
@@ -146,8 +149,13 @@ class Controller {
 				'topic_rows' => array()
 			);
 
+			if(isset($_SESSION['user_data'])) {
+				$this->varArray['topic_rows'] = $this->topic_database->get_topics_with_unread_marked($_SESSION['user_data']['id']);
+			} else {
+				$this->varArray['topic_rows'] = $this->topic_database->get_topics();
+			}
 			$this->contentArray = array('header','content_topics', 'footer');
-			$this->varArray['topic_rows'] = $this->topic_database->get_topics();
+			
 		} else if($page == "topic") {
 			$topic_id = isset($_GET['topic_id']) ? $_GET['topic_id'] : null;
 
@@ -158,6 +166,10 @@ class Controller {
 
 			$this->contentArray = array('header','content_topic', 'footer');
 			$this->varArray['comment_rows'] = $this->topic_database->get_comments($topic_id);
+
+			if(isset($_SESSION["user_data"])) {
+				$this->topic_database->enter_topic_date($topic_id, $_SESSION["user_data"]["id"]);
+			}
 		} else if($page == "new_comment") {
 			$topic_id = isset($_GET['topic_id']) ? $_GET['topic_id'] : null;
 
@@ -179,7 +191,7 @@ class Controller {
 		} else if($page == "logout") {
 			unset($_SESSION['user_data']);
 
-			header('Location: http://' . Constants::$BASE_URL . '?page=topics');
+			header('Location: http://' . Constants::$BASE_URL . '?page=login');
 		}
 	}
 
@@ -190,15 +202,6 @@ class Controller {
 
 	public function getValue($param) {
 		return $this->varArray[$param];
-	}
-
-	
-
-	private function is_user_name_unique($user_name) {
-		if($user_name == "santag") {
-			return false;
-		}
-		return true;
 	}
 
 	private function is_password_match($password1, $password2) {

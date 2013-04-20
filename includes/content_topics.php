@@ -13,15 +13,24 @@
                     <?php
                         foreach ($controller->getValue("topic_rows") as $row) {
                             echo '<tr>';
-                            echo '<td><a href="forum.php?page=topic&topic_id=' . $row["id"] . '">' . $row["title"] . '</a></td>';
+                            if(!isset($_SESSION['user_data']) || $row["last_read_date"] >= $row["last_comment_date"]) {
+                                echo '<td><a href="forum.php?page=topic&topic_id=' . $row["id"] . '">' . $row["title"] . '</a></td>';
+                            } else {
+                                echo '<td><a href="forum.php?page=topic&topic_id=' . $row["id"] . '" class="unread">' . $row["title"] . '</a></td>';
+                            }
                             echo '<td>' . $row["comments"] . '</td>';
-                            echo '<td>' . $row["last_comment_by"] . $row["create_date"] . '</td>';
+                            echo '<td>' . $row["last_comment_by"] . ' - ' . $row["last_comment_date"] . '</td>';
                             echo '</tr>';
                         }
                     ?>
                 </table>
             </div>
         <div id="menu">
+            <?php 
+                    if(isset($_SESSION['user_data'])) {
+                        echo 'Üdv, ' . $_SESSION['user_data']['name'] . '!';
+                    }
+            ?>
         	<ul>
                 <?php 
                     if(!isset($_SESSION['user_data'])) :
@@ -31,7 +40,7 @@
                 <?php        
                     endif;
                 ?>
-                <li class="act-link"><a href="forum.php?page=topics">Fórum</a></li>               
+                <li class="act-link">Fórum</li>               
                 <?php 
                     if(isset($_SESSION['user_data'])) :
                 ?>

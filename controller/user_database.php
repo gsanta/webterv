@@ -39,4 +39,14 @@ class User_database {
 		return $auth_info;
 	}
 
+	public function is_user_name_unique($user_name) {
+		$stmt = $this->db->prepare("SELECT * FROM user WHERE name=?");
+		$stmt->execute(array($user_name));
+
+		if($stmt->rowCount() > 0) {
+			return false;
+		}
+		return true;
+	}
+
 }

@@ -30,7 +30,7 @@
                 <?php 
                     if(!isset($_SESSION['user_data'])) :
                 ?>
-                    <li class="act-link"><a href="forum.php?page=login">Bejelentkezés</a></li>
+                    <li class="act-link">Bejelentkezés</li>
                     <li><a href="forum.php?page=registration">Regisztráció</a></li>
                 <?php        
                     endif;
