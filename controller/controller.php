@@ -154,6 +154,8 @@ class Controller {
 			} else {
 				$this->varArray['topic_rows'] = $this->topic_database->get_topics();
 			}
+			
+
 			$this->contentArray = array('header','content_topics', 'footer');
 			
 		} else if($page == "topic") {
@@ -161,11 +163,13 @@ class Controller {
 
 			$this->varArray = array(
 				'comment_rows' => array(),
-				'topic_id' => $topic_id
+				'topic_id' => $topic_id,
+				'topic_title' => ""
 			);
 
 			$this->contentArray = array('header','content_topic', 'footer');
 			$this->varArray['comment_rows'] = $this->topic_database->get_comments($topic_id);
+			$this->varArray['topic_title'] = $this->topic_database->get_topic_title($topic_id);
 
 			if(isset($_SESSION["user_data"])) {
 				$this->topic_database->enter_topic_date($topic_id, $_SESSION["user_data"]["id"]);
@@ -174,17 +178,19 @@ class Controller {
 			$topic_id = isset($_GET['topic_id']) ? $_GET['topic_id'] : null;
 
 			$this->varArray = array(
-				'topic_id' => $topic_id
+				'topic_id' => $topic_id,
+				'topic_title' => ""
 			);
 
 			$this->contentArray = array('header','content_comment_new', 'footer');
+			$this->varArray['topic_title'] = $this->topic_database->get_topic_title($topic_id);
 
 			$action = isset($_POST['action']) ? $_POST['action'] : null;
 			if($action == "add_comment") {
 				$topic_id = isset($_POST['topic_id']) ? $_POST['topic_id'] : null;
 				$content = isset($_POST['content']) ? $_POST['content'] : null;
 
-				if($this->topic_database->add_comment(1,$topic_id,$content) == 1) {
+				if($this->topic_database->add_comment($_SESSION['user_data']['id'],$topic_id,$content) == 1) {
 					header('Location: http://' . Constants::$BASE_URL . '?page=topic&topic_id=' . $topic_id);
 				}
 			}
@@ -192,6 +198,75 @@ class Controller {
 			unset($_SESSION['user_data']);
 
 			header('Location: http://' . Constants::$BASE_URL . '?page=login');
+		} else if($page == "like") {
+			$topic_id = isset($_GET['topic_id']) ? $_GET['topic_id'] : null;
+			$comment_id = isset($_GET['comment_id']) ? $_GET['comment_id'] : null;
+
+			$this->topic_database->like_comment($comment_id);
+
+			header('Location: http://' . Constants::$BASE_URL . '?page=topic&topic_id=' . $topic_id);
+		} else if($page == "new_topic") {
+			$this->varArray = array(
+				'error_message' => ""
+			);
+
+			$this->contentArray = array('header','content_topic_new', 'footer');
+			if(!isset($_SESSION['user_data'])) {
+				return;
+			}	
+
+			$action = isset($_POST['action']) ? $_POST['action'] : null;
+			if($action == "add_topic") {
+				$topic_name = isset($_POST['title']) ? $_POST['title'] : null;
+				$comment = isset($_POST['comment']) ? $_POST['comment'] : null;
+				if($this->topic_database->add_topic($topic_name, $comment, $_SESSION['user_data']['id']) == 1) {
+					header('Location: http://' . Constants::$BASE_URL . '?page=topics');
+				} else {
+					$this->varArray['error_message'] = 'Hiba történt!';
+				}
+			}
+		} else if($page == "profile") {
+			$this->varArray = array(
+				'error_message' => ""
+			);
+
+			$this->contentArray = array('header','content_profile', 'footer');
+			if(!isset($_SESSION['user_data'])) {
+				return;
+			}	
+
+			$action = isset($_POST['action']) ? $_POST['action'] : null;
+			if($action == "upload") {
+				if ($_FILES["file"]["error"] > 0) {
+				    $this->varArray['error_message'] = "Hiba történt!";
+				} else {
+
+					$allowedExts = array("gif", "jpeg", "jpg", "png");
+					$extension = end(explode(".", $_FILES["file"]["name"]));
+					if ((($_FILES["file"]["type"] == "image/gif")
+							|| ($_FILES["file"]["type"] == "image/jpeg")
+							|| ($_FILES["file"]["type"] == "image/jpg")
+							|| ($_FILES["file"]["type"] == "image/pjpeg")
+							|| ($_FILES["file"]["type"] == "image/x-png")
+							|| ($_FILES["file"]["type"] == "image/png"))
+							&& in_array($extension, $allowedExts)) {
+
+						$image = "profile_" . $_SESSION['user_data']['id'] . '.' . $extension;
+						$this->user_database->upload_profile($_SESSION['user_data']['id'],$image);
+							move_uploaded_file($_FILES["file"]["tmp_name"],"upload/" . $image);
+							header('Location: http://' . Constants::$BASE_URL . '?page=topics');
+					}
+					
+				}
+
+				
+
+				/*if($this->topic_database->add_topic($topic_name, $comment, $_SESSION['user_data']['id']) == 1) {
+					header('Location: http://' . Constants::$BASE_URL . '?page=topics');
+				} else {
+					$this->varArray['error_message'] = 'Hiba történt!';
+				}*/
+			}
 		}
 	}
 

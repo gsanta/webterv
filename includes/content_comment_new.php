@@ -1,11 +1,14 @@
         <div id="container">
             <div id="content">
-                <form action="forum.php?page=new_comment" method="post">
-                    <input type="hidden" name="topic_id" value="<?php echo $controller->getValue("topic_id"); ?>"/>
-                    <input type="hidden" name="action" value="add_comment"/>
-                    <textarea name="content"></textarea>    
-                    <input type="submit" name="new_comment" value="Elküld">
-                </form>
+                <div id="comment-new-form">
+                    Új hozzászólás ide: <?php echo $controller->getValue("topic_title"); ?>
+                    <form action="forum.php?page=new_comment" method="post">
+                        <input type="hidden" name="topic_id" value="<?php echo $controller->getValue("topic_id"); ?>"/>
+                        <input type="hidden" name="action" value="add_comment"/>
+                        <textarea name="content"></textarea><br>    
+                        <input type="submit" name="new_comment" value="Elküld">
+                    </form>
+                </div>
             </div>
         <div id="menu">
             <?php 

@@ -9,49 +9,86 @@ class Topic_database {
 
 	public function get_topics() {
 		$stmt = $this->db->prepare(<<<STR
-			SELECT topic.title AS title, topic.id AS id, date(c.last_comment_date) AS last_comment_date, count(c.comments) AS comments,
-			user.name AS last_comment_by FROM topic
-			LEFT JOIN (SELECT MAX(comment.modified_date) as last_comment_date, COUNT(comment.topic_id) as comments, comment.topic_id as c_topic_id,
-			comment.user_id as c_user_id FROM comment GROUP BY comment.modified_date HAVING comment.topic_id = topic_id) as c ON topic.id = c_topic_id
-			LEFT JOIN user ON user.id = c_user_id GROUP BY topic.id;
+			SELECT topic.title AS title, topic.id AS id, MAX(comment.modified_date) AS last_comment_date, count(comment.id) AS comments FROM topic
+			LEFT JOIN comment ON comment.topic_id = topic.id
+			GROUP BY topic.id
 STR
 		);
 		$stmt->execute();
 		$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-		return $rows;
+		$ret = array();
+
+		foreach($rows as $row) {
+			$stmt = $this->db->prepare("SELECT user.name AS name, DATE(comment.modified_date) as date2 FROM user,comment 
+										WHERE user.id = comment.user_id AND comment.modified_date = ? and comment.topic_id = ?");
+			$stmt->execute(array($row["last_comment_date"],$row["id"]));
+			$rows2 = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+			$ret[] = array(
+				'title' => $row["title"],
+				'id' => $row["id"],
+				'comments' => $row["comments"],
+				'last_comment_date' => $rows2[0]["date2"],
+				'last_comment_by' => $rows2[0]["name"],
+				'unread' => 0
+			);
+		}
+		return $ret;
 	}
 
 	public function get_topics_with_unread_marked($user_id) {
-		$stmt = $this->db->prepare(<<<STR
-			SELECT topic.title AS title, topic.id AS id, date(c.last_comment_date) AS last_comment_date, count(c.comments) AS comments,
-			user.name AS last_comment_by, lr_date as last_read_date FROM topic
-			LEFT JOIN (SELECT MAX(comment.modified_date) as last_comment_date, COUNT(comment.topic_id) as comments, comment.topic_id as c_topic_id,
-			comment.user_id as c_user_id FROM comment GROUP BY comment.modified_date HAVING comment.topic_id = topic_id) as c ON topic.id = c_topic_id
-			LEFT JOIN user ON user.id = c_user_id 
-			LEFT JOIN (SELECT last_read.topic_id as topic_id, last_read.user_id as user_id, last_read.date as lr_date from last_read
-			WHERE last_read.topic_id = topic_id and last_read.user_id = ?) as lr ON topic.id = lr.topic_id
-			GROUP BY topic.id;
-STR
-		);
+		$topics = $this->get_topics();
 
-		$stmt->execute(array($user_id));
+		$new_topics = array();
+
+		foreach($topics as $topic) {
+
+			$is_row = $this->db->prepare("SELECT * FROM last_read WHERE last_read.topic_id = ? and last_read.user_id = ?");
+			$is_row->execute(array($topic["id"],$user_id));
+			if($is_row->rowCount() > 0) {
+				$stmt = $this->db->prepare("SELECT COUNT(comment.id) as unread FROM comment, last_read WHERE comment.modified_date > last_read.date AND
+											 comment.topic_id = ? AND last_read.user_id = ? AND comment.topic_id = last_read.topic_id");
+				$stmt->execute(array($topic["id"], $user_id));
+			} else {
+				$stmt = $this->db->prepare("SELECT COUNT(comment.id) as unread FROM comment WHERE comment.topic_id = ? AND comment.topic_id = last_read.topic_id");
+				$stmt->execute(array($topic["id"]));
+			}
+
+			$tmp_row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			
+			$new_topics[] = array(
+				'title' => $topic["title"],
+				'id' => $topic["id"],
+				'comments' => $topic["comments"],
+				'last_comment_date' => $topic["last_comment_date"],
+				'last_comment_by' => $topic['last_comment_by'],
+				'unread' => isset($tmp_row[0]["unread"]) ? $tmp_row[0]["unread"] : 0
+			);
+		}
+
+		return $new_topics;
+	}
+
+	public function get_topic_title($topic_id) {
+		$stmt = $this->db->prepare("SELECT title FROM topic WHERE topic.id = ?");
+		$stmt->execute(array($topic_id));
 		$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-		return $rows;
+		return $rows[0]['title'];
 	}
 
 	public function get_comments($topic_id) {
-		$stmt = $this->db->prepare("SELECT user.name AS user_name, comment.content AS content, comment.create_date AS create_date " .
-									" FROM comment, user WHERE comment.user_id = user.id and comment.topic_id = " . $topic_id);
-		$stmt->execute();
+		$stmt = $this->db->prepare("SELECT user.name AS user_name, user.image_name as image_name, comment.content AS content, comment.create_date AS create_date,
+								 	comment.id AS id, comment.like AS liked FROM comment, user WHERE comment.user_id = user.id and comment.topic_id = ?");
+		$stmt->execute(array($topic_id));
 		$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 		return $rows;
 	}
 
 	public function add_comment($user_id,$topic_id,$content) {
-		$stmt = $this->db->prepare("INSERT INTO comment (topic_id,user_id,contednt,create_date,modified_date) VALUES(?,?,?,now(),now())");
+		$stmt = $this->db->prepare("INSERT INTO comment (topic_id,user_id,content,create_date,modified_date) VALUES(?,?,?,now(),now())");
 		$rows = $stmt->execute(array($topic_id,$user_id,$content));
 
 		return $rows;
@@ -64,4 +101,31 @@ STR
 		$stmt = $this->db->prepare("INSERT INTO last_read (topic_id,user_id,date) values(?,?,now());");
 		$stmt = $stmt->execute(array($topic_id,$user_id));
 	}
+
+	public function like_comment($comment_id) {
+		$stmt = $this->db->prepare("SELECT comment.like as liked FROM comment WHERE comment.id = ?");
+		$stmt->execute(array($comment_id));
+
+		$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+		$like = $rows[0]["liked"];
+
+		$stmt = $this->db->prepare("UPDATE comment SET comment.like = ? WHERE comment.id = ?");
+		$stmt = $stmt->execute(array($like + 1,$comment_id));
+	}
+
+	public function add_topic($title,$comment, $user_id) {
+		$stmt = $this->db->prepare("INSERT INTO topic (title,create_date) VALUES(?,now())");
+		$stmt->execute(array($title));
+
+		$id = $this->db->lastInsertId();
+
+		$this->add_comment($user_id, $id, $comment);
+
+		if($stmt->rowCount() == 1) {
+			return true;
+		}
+
+		return false;
+	} 
 }

@@ -35,6 +35,7 @@ class User_database {
 			$auth_info["success"] = true;
 			$auth_info["user_data"]["name"] = $row["name"];
 			$auth_info["user_data"]["id"] = $row["id"];
+			$auth_info["user_data"]["image_name"] = $row["image_name"];
 		}
 		return $auth_info;
 	}
@@ -47,6 +48,16 @@ class User_database {
 			return false;
 		}
 		return true;
+	}
+
+	public function upload_profile($user_id,$image_name) {
+		$stmt = $this->db->prepare("UPDATE user SET image_name = ? WHERE id = ?");
+		$stmt->execute(array($image_name, $user_id));
+
+		if($stmt->rowCount() > 0) {
+			return true;
+		}
+		return false;
 	}
 
 }
