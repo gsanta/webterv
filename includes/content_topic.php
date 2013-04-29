@@ -34,7 +34,7 @@
                         echo 'Üdv, ' . $_SESSION['user_data']['name'] . '!';
                     }
                 ?>
-        	<ul>
+        	<ul id="menu-list">
                 <?php 
                     if(!isset($_SESSION['user_data'])) :
                 ?>
@@ -47,10 +47,35 @@
                 <?php 
                     if(isset($_SESSION['user_data'])) :
                 ?>
+                    <li><a href="forum.php?page=profile">Profilkép</a></li>
                     <li><a href="forum.php?page=logout">Kijelentkezés</a></li>
                 <?php        
                     endif;
                 ?>
             </ul>
+
+            <?php 
+                    if(isset($_SESSION['user_data'])) {
+                        echo '<img id="profile" src="upload/' . $_SESSION['user_data']['image_name'] . '" width="100" alt="profil kép"/>';
+                    }
+                ?>
+
+                <?php 
+                    if(isset($_SESSION['user_data'])) :
+                ?>
+                    <div id="active-users">
+                            Aktív felhasználók:
+
+                            <ul>
+                            <?php
+                                foreach ($controller->getValue("active_users") as $row) {
+                                    echo '<li>' . $row['name'] . '</li>';
+                                }
+                            ?>
+                            </ul>
+                    </div>
+                <?php
+                     endif;
+                ?>
         </div>
         </div>             

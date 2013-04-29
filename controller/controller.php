@@ -23,6 +23,7 @@ class Controller {
 	}
 
 	private function createContent() {
+
 		$page = isset($_GET['page']) ? $_GET['page'] : 'topics';
 		$action = isset($_GET['action']) ? $_GET['action'] : null;
 		
@@ -291,6 +292,13 @@ class Controller {
 					$this->varArray['error_message'] = 'Hiba történt!';
 				}*/
 			}
+		}
+
+		$this->varArray['active_users'] = array();
+		if(isset($_SESSION['user_data'])) {
+			$this->user_database->refresh_time($_SESSION['user_data']['id']);
+
+			$this->varArray['active_users'] = $this->user_database->get_active_users();
 		}
 	}
 

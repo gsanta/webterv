@@ -21,6 +21,19 @@ class User_database {
 		}
 	}
 
+	public function refresh_time($user_id) {
+		$stmt = $this->db->prepare("UPDATE user SET last_interact_date = now() WHERE id = ?");
+		$row = $stmt->execute(array($user_id));
+	}
+
+	public function get_active_users() {
+		$stmt = $this->db->prepare("SELECT * FROM user WHERE DATE_SUB(NOW(), INTERVAL 1 MINUTE) < last_interact_date");
+		$stmt->execute();
+		$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+		return $rows;
+	}
+
 	public function authenticate($user_name, $password) {
 		$auth_info = array(
 			"success" => false,

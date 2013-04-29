@@ -12,5 +12,5 @@ class Constants {
 
 	public static $DATABASE_USERNAME = 'root';
 
-	public static $DATABASE_PASSWORD = '';
+	public static $DATABASE_PASSWORD = 'santag';
 }
