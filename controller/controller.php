@@ -1,13 +1,16 @@
 <?php
 
-require 'user_database.php';
-require 'topic_database.php';
-
 class Controller {
 	private $varArray;
 	private $contentArray;
 	private $user_database;
 	private $topic_database;
+	private $personal_info = array(
+		'Név' => 'Sánta Gergely Dávid',
+		'Szak, évfolyam' => 'Gazdaságinformatikus, II. évfolyam',
+		'Tagozat' => 'Tagozat (nappali/lelvelező)',
+		'E-mail' => 'h171917@stud.u-szeged.hu'
+	);
 
 	function __construct() {
 		$this->user_database = new User_database();
@@ -176,11 +179,24 @@ class Controller {
 			}
 		} else if($page == "new_comment") {
 			$topic_id = isset($_GET['topic_id']) ? $_GET['topic_id'] : null;
+			$comment_id = isset($_GET['comment_id']) ? $_GET['comment_id'] : null;
 
 			$this->varArray = array(
 				'topic_id' => $topic_id,
-				'topic_title' => ""
+				'topic_title' => "",
+				'title' => 'Új hozzászólás',
+				'content' => "",
+				'comment_id' => "-1"
 			);
+
+			if($comment_id != null) {
+				$row = $this->topic_database->get_comment_by_id($comment_id);
+				$this->varArray['content'] = trim($row[0]["content"]);
+				$this->varArray['comment_id'] = $row[0]["id"];
+				$this->varArray['title'] = 'Hozzászólás szerkesztése';
+			}
+
+			
 
 			$this->contentArray = array('header','content_comment_new', 'footer');
 			$this->varArray['topic_title'] = $this->topic_database->get_topic_title($topic_id);
@@ -189,11 +205,19 @@ class Controller {
 			if($action == "add_comment") {
 				$topic_id = isset($_POST['topic_id']) ? $_POST['topic_id'] : null;
 				$content = isset($_POST['content']) ? $_POST['content'] : null;
+				$comment_id = isset($_POST['comment_id']) ? $_POST['comment_id'] : null;
 
-				if($this->topic_database->add_comment($_SESSION['user_data']['id'],$topic_id,$content) == 1) {
+				if($this->topic_database->add_comment($_SESSION['user_data']['id'],$topic_id,$content,$comment_id) == 1) {
 					header('Location: http://' . Constants::$BASE_URL . '?page=topic&topic_id=' . $topic_id);
 				}
 			}
+		} else if($page == "delete_comment") {
+			$topic_id = isset($_GET['topic_id']) ? $_GET['topic_id'] : null;
+			$comment_id = isset($_GET['comment_id']) ? $_GET['comment_id'] : null;
+
+			$this->topic_database->delete_comment($comment_id);
+			header('Location: http://' . Constants::$BASE_URL . '?page=topic&topic_id=' . $topic_id);
+			
 		} else if($page == "logout") {
 			unset($_SESSION['user_data']);
 
@@ -273,6 +297,10 @@ class Controller {
 	public function getContentArray() {
 		return $this->contentArray;
 		
+	}
+
+	public function get_personal_info() {
+		return $this->personal_info;
 	}
 
 	public function getValue($param) {

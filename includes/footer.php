@@ -1,10 +1,13 @@
 	<div id="footer-wrap">
-		<?php
-			if(isset($_SESSION['user_data'])) :
+
+		<?php 
+			foreach ($controller->get_personal_info() as $key => $value) {
+				echo '<span class="key">' . $key . '</span>: ';
+				echo '<span class="value">' . $value . '</span>, ';
+			}
 		?>
-		<span>Név: </span>
-		<span><?php echo $_SESSION['user_data']['name']; ?></span>
-		<?php endif; ?>
+		
+		
 	</div>
 </body>
 </html>

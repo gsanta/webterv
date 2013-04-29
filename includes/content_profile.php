@@ -1,25 +1,26 @@
         <div id="container">
             <div id="content">
-                <div id="profile-form">  
+                <div id="profile-form" class="form-container">  
                     <form action="forum.php?page=profile" method="post" enctype="multipart/form-data">
-                        <input type="hidden" name="action" value="upload"/>
-                        <?php 
-                            if($controller->getValue("error_message") != "") {
-                                echo '<span class="error-message">' . $controller->getValue("error_message") . '</a>';
-                            }
-                        ?>
-                        <table>
-                            <tr>
-                                <th colspan="2">Profilkép feltöltése</th>
-                            </tr>
-                            <tr>
-                                <td><label for="file">Fájl név:</label></td>
-                                <td><input type="file" name="file"></td>
-                            </tr>
-                            <tr>
-                                <td colspan="2" class="form-center"><input type="submit" name="upload" value="Feltölt"></td>
-                            </tr>          
-                        </table>
+
+                        <fieldset>
+                        <legend>Profilkép</legend>
+                            <input type="hidden" name="action" value="upload"/>
+                            <?php 
+                                if($controller->getValue("error_message") != "") {
+                                    echo '<span class="error-message">' . $controller->getValue("error_message") . '</a>';
+                                }
+                            ?>
+                            <table>
+                                <tr>
+                                    <td><label for="file">Fájl név:</label></td>
+                                    <td><input type="file" name="file"></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" class="form-center"><input type="submit" name="upload" value="Feltölt"></td>
+                                </tr>          
+                            </table>
+                        </legend>
                     </form>
                 </div>
             </div>

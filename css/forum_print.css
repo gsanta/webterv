@@ -4,6 +4,8 @@ html, body {
     margin: 0;
     padding: 0;
     height: 100%;
+    font-family:times,serif;
+    font-size:10px;
 }
 
 input {
@@ -128,9 +130,6 @@ li {
     width: 700px;
     margin: 0 auto;
     border-collapse:collapse;
-    webkit-box-shadow: 7px 7px 5px rgba(50, 50, 50, 0.75);
-    -moz-box-shadow:    7px 7px 5px rgba(50, 50, 50, 0.75);
-    box-shadow:         7px 7px 5px rgba(50, 50, 50, 0.75);
 }
 
 #table-topics th {
@@ -167,23 +166,10 @@ li {
     position: relative;
 }
 
-.comment-body pre {
-    white-space: pre-wrap;
-}
-
 .comment-header {
     padding-left: 10px;
     margin-left: 100px;
     background: #b4aeae;
-}
-
-.comment-profile {
-    float: left;
-    min-height: 100px;
-    width: 100px;
-    padding-right: 5px;
-    padding-bottom: 5px;
-
 }
 
 .act-link {
@@ -204,10 +190,11 @@ li {
 }
 
 #comment-new-form {
-    width: 450px;
+    width: 400px;
+    margin: 0 auto;
     margin-top: 100px;
+    border: 1px solid black;
 }
-
 
 #comment-new-form textarea {
     width: 380px;
@@ -216,8 +203,10 @@ li {
 }
 
 #topic-new-form {
-    width: 350px;
-    margin-top: 50px;
+    width: 300px;
+    margin: 0 auto;
+    margin-top: 100px;
+    border: 1px solid black;
 }
 
 #topic-new-form input[name=title] {
@@ -242,20 +231,10 @@ li {
 }
 
 #profile-form {
-    width: 350px;
-    margin-top: 100px;
-}
-
-.form-container {
+    width: 300px;
     margin: 0 auto;
+    margin-top: 100px;
     border: 1px solid black;
-    webkit-box-shadow: 7px 7px 5px rgba(50, 50, 50, 0.75);
-    -moz-box-shadow:    7px 7px 5px rgba(50, 50, 50, 0.75);
-    box-shadow:         7px 7px 5px rgba(50, 50, 50, 0.75);
-}
-
-.form-container form {
-    padding: 5px;
 }
 
 .message {
@@ -267,10 +246,13 @@ li {
     padding-left: 100px;
 }
 
-.key {
-    font-weight: bold;
+.comment-profile {
+    float: left;
+    min-height: 100px;
+    width: 100px;
+    background: red;
 }
 
-.important {
-    color: red;
+.key {
+    font-weight: bold;
 }

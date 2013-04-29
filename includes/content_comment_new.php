@@ -1,12 +1,21 @@
         <div id="container">
             <div id="content">
-                <div id="comment-new-form">
-                    Új hozzászólás ide: <?php echo $controller->getValue("topic_title"); ?>
+                <div id="comment-new-form" class="form-container">
                     <form action="forum.php?page=new_comment" method="post">
-                        <input type="hidden" name="topic_id" value="<?php echo $controller->getValue("topic_id"); ?>"/>
-                        <input type="hidden" name="action" value="add_comment"/>
-                        <textarea name="content"></textarea><br>    
-                        <input type="submit" name="new_comment" value="Elküld">
+                        <fieldset>
+                            <legend><?php echo $controller->getValue("title"); ?>: <?php echo $controller->getValue("topic_title"); ?></legend>
+                            <input type="hidden" name="topic_id" value="<?php echo $controller->getValue("topic_id"); ?>"/>
+                            <input type="hidden" name="comment_id" value="<?php echo $controller->getValue("comment_id"); ?>"/> 
+                            <input type="hidden" name="action" value="add_comment"/>
+                            <textarea name="content">
+                                <?php 
+                                        if(isset($_SESSION['user_data'])) {
+                                            echo $controller->getValue("content");
+                                        }
+                                ?>
+                            </textarea><br>    
+                            <input type="submit" name="new_comment" value="Elküld">
+                        </fieldset>
                     </form>
                 </div>
             </div>
